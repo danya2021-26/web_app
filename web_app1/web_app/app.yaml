@@ -1,0 +1,2 @@
+runtime:python3a
+entrypoint:gunicorn -b:$PORT main.py
