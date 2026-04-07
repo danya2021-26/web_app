@@ -1,5 +1,5 @@
-from flash import Flask,render_template
-app=Flash(_name_)
+from flask import Flask,render_template
+app=Flask(_name_)
 @app.route('/')
 def home():
     return render_template('index.html',title="home page")
