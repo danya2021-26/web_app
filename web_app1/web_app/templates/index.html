@@ -1,8 +1,185 @@
-<html>
-    <head>
-        <title>secong git lab</title>
-    </head>
-</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tower of Hanoi</title>
+    <style>
+        :root {
+            --bg-color: #f4f7f6;
+            --tower-color: #444;
+            --disk-color: #ff5722;
+        }
+
+        body {
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding-top: 50px;
+        }
+
+        .game-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-end;
+            width: 600px;
+            height: 250px;
+            border-bottom: 8px solid var(--tower-color);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .tower {
+            width: 120px;
+            height: 100%;
+            display: flex;
+            flex-direction: column-reverse;
+            align-items: center;
+            position: relative;
+            cursor: pointer;
+        }
+
+        /* The vertical rod */
+        .tower::before {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            width: 10px;
+            height: 100%;
+            background-color: var(--tower-color);
+            z-index: 0;
+            border-radius: 5px 5px 0 0;
+        }
+
+        .disk {
+            height: 25px;
+            border-radius: 12px;
+            background-color: var(--disk-color);
+            z-index: 1;
+            margin-bottom: 2px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            transition: transform 0.2s;
+        }
+
+        .selected {
+            transform: translateY(-20px);
+            outline: 3px solid #007bff;
+        }
+
+        .stats {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 1rem;
+            cursor: pointer;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+        }
+
+        button:hover { background: #0056b3; }
+    </style>
+</head>
 <body>
-    <p>git rep</p>
+
+    <h1>Tower of Hanoi</h1>
+    <div class="stats">Moves: <span id="move-count">0</span></div>
+   
+    <div class="game-container" id="game-container">
+        <div class="tower" id="tower-0" onclick="handleTowerClick(0)"></div>
+        <div class="tower" id="tower-1" onclick="handleTowerClick(1)"></div>
+        <div class="tower" id="tower-2" onclick="handleTowerClick(2)"></div>
+    </div>
+
+    <button onclick="resetGame()">Reset Game</button>
+
+    <script>
+        const towerElements = [
+            document.getElementById('tower-0'),
+            document.getElementById('tower-1'),
+            document.getElementById('tower-2')
+        ];
+        const moveDisplay = document.getElementById('move-count');
+       
+        let towers = [[3, 2, 1], [], []]; // Disk sizes (3 is biggest)
+        let selectedTower = null;
+        let moves = 0;
+
+        function render() {
+            towers.forEach((disks, towerIndex) => {
+                towerElements[towerIndex].innerHTML = '';
+                disks.forEach(size => {
+                    const disk = document.createElement('div');
+                    disk.classList.add('disk');
+                    disk.style.width = (size * 30 + 30) + 'px';
+                    // Color variation based on size
+                    disk.style.backgroundColor = `hsl(${size * 40}, 70%, 50%)`;
+                   
+                    if (selectedTower === towerIndex && size === disks[disks.length - 1]) {
+                        disk.classList.add('selected');
+                    }
+                   
+                    towerElements[towerIndex].appendChild(disk);
+                });
+            });
+            moveDisplay.innerText = moves;
+        }
+
+        function handleTowerClick(index) {
+            if (selectedTower === null) {
+                // Pick up disk
+                if (towers[index].length > 0) {
+                    selectedTower = index;
+                }
+            } else {
+                // Try to drop disk
+                const from = selectedTower;
+                const to = index;
+                const diskToMove = towers[from][towers[from].length - 1];
+                const topDiskOnTarget = towers[to][towers[to].length - 1];
+
+                if (from === to) {
+                    selectedTower = null; // Deselect
+                } else if (!topDiskOnTarget || diskToMove < topDiskOnTarget) {
+                    // Valid move
+                    towers[to].push(towers[from].pop());
+                    moves++;
+                    selectedTower = null;
+                    checkWin();
+                } else {
+                    // Invalid move
+                    alert("Invalid move! You cannot place a larger disk on a smaller one.");
+                    selectedTower = null;
+                }
+            }
+            render();
+        }
+
+        function checkWin() {
+            if (towers[2].length === 3) {
+                setTimeout(() => {
+                    alert(`Congratulations! You solved it in ${moves} moves!`);
+                    resetGame();
+                }, 100);
+            }
+        }
+
+        function resetGame() {
+            towers = [[3, 2, 1], [], []];
+            moves = 0;
+            selectedTower = null;
+            render();
+        }
+
+        // Initial Start
+        render();
+    </script>
 </body>
+</html>
