@@ -1,2 +1,93 @@
 runtime:python3a
-entrypoint:gunicorn -b:$PORT main.py
+
+//*GOOGLE APP ENGINE
+STEP 1 — Create GitHub Repository and Folders
+1.	Open GitHub → New Repository 
+2.	Name: web-app-engine 
+Create files and folders using Add file → Create new file
+Create this structure:
+Web_app/
+   app.yaml
+   main.py
+   requirements.txt
+   templates/
+       index.html
+-	Paste the code (given below) into respective files and Commit.
+STEP 2 — Open Google Cloud Console
+1.	Go to: https://console.cloud.google.com 
+2.	Create New Project 
+3.	Enable It.
+STEP 3 — Enable App Engine Admin API
+1.	≡ Menu → APIs & Services → Library 
+2.	Search App Engine Admin API 
+3.	Click Enable 
+4.	If asked → Authorize
+STEP 4 — Open Cloud Shell (Shield / Square Icon)
+Look at top-right corner
+You will see:
+[ >_ ]
+First time:
+•	Click Authorize / Enable 
+•	Wait for terminal to start 
+Then click:
+Open Editor
+STEP 5 — Create App Engine using command
+In terminal:
+gcloud app create
+-	Select region
+-	App Engine is created
+STEP 6 — Clone GitHub Project
+git clone https://github.com/your-username/web-app-engine.git
+cd web-app-engine/Web_app
+STEP 7 — Run Project
+python main.py
+STEP 8 — View Web Page
+Click:
+Web Preview 🌐 → Preview on port 8080
+Output:
+Success! Your Python-powered HTML is running.	
+STEP 9 — Stop Server
+fuser -k 8080/tcp
+STEP 10 — Deploy to App Engine
+gcloud app deploy
+Press Y
+Then:
+gcloud app browse
+
+
+
+
+CODE to be used
+app.yaml
+runtime: python39
+entrypoint: gunicorn -b :$PORT main:app
+
+main.py
+from flask import Flask, render_template
+
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return render_template('index.html', title="Home Page")
+
+if __name__ == '__main__':
+    app.run(host='127.0.0.1', port=8080, debug=True)
+
+requirements.txt
+flask==3.0.0
+gunicorn==21.2.0
+
+templates/index.html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ title }}</title>
+</head>
+<body>
+    <h1>Success! Your Python-powered HTML is running.</h1>
+</body>
+</html>
+
+
+\\*
